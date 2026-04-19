@@ -1,99 +1,66 @@
-Green Guard AI 🌱
+---
+title: GreenGuard AI
+emoji: 🌿
+colorFrom: green
+colorTo: blue
+sdk: docker
+app_port: 7860
+pinned: false
+---
 
-Green Guard AI is a state-of-the-art plant disease detection and health monitoring system leveraging deep learning with UGNet for precise leaf and disease segmentation. The system enables farmers and agronomists to detect plant diseases early and estimate severity, empowering proactive crop management.
-Project Overview
+# GreenGuard AI
 
-Green Guard AI leverages UGNet (U-Net with Gated Convolutions) for plant leaf segmentation and combines patch-based early and late fusion analysis for robust disease detection and severity estimation.
+GreenGuard AI is a polished plant-health screening demo focused on potato leaf disease analysis. It combines a U-Net style segmentation model with a downstream disease scoring model to highlight risky regions, estimate severity, and present the result in a clear decision-ready interface.
 
-Segments leaves and diseased regions accurately.
+## Why this version is stronger
 
-Handles multiple crops and disease types.
+- Cleaner product storytelling for hackathons, judges, and recruiters.
+- Better Streamlit interface with a branded hero section, severity cards, heatmap view, and downloadable report.
+- Safer model loading that supports your local `unet80.h5` instead of forcing a fresh download.
+- More honest classifier handling: the CNN is treated as a binary disease-risk model, matching its actual output shape.
+- Ready for Hugging Face Spaces with a root Docker deployment setup.
 
-Estimates disease severity relative to the original predicted region.
+## Live workflow
 
-The system is designed for real-world agricultural applications to provide actionable insights for farmers.
+1. Upload a potato leaf image.
+2. Segment suspicious regions with the U-Net model.
+3. Score each region for disease risk.
+4. Generate a severity summary and exportable text report.
 
-Features
+## Project files
 
-UGNet Segmentation: High-precision leaf and disease region segmentation.
+- `leaf_disease.py`: upgraded Streamlit app
+- `Potato_Disease_Detection_Model2.h5`: disease scoring model
+- `unet80.h5`: segmentation model
+- `.streamlit/config.toml`: Streamlit runtime configuration
+- `Dockerfile`: Hugging Face Spaces container entrypoint
 
-Patch-Based Analysis: Supports early and late fusion for robust disease detection.
+## Model placement
 
-Severity Estimation: Accurately calculates disease severity.
+The app looks for the U-Net model in this order:
 
-User-Friendly: Ready for integration with web or mobile apps.
+1. `GREEN_GUARD_UNET_PATH`
+2. `./unet80.h5`
+3. `C:/Users/admin/Downloads/unet80.h5`
 
-Extensible: Add new crops, diseases, or datasets easily.
+For deployment on Hugging Face, place `unet80.h5` in the repository root so the Space can load it directly.
 
-System Architecture
-flowchart LR
-A[Input Image] --> B[Preprocessing]
-B --> C[UGNet Segmentation]
-C --> D[Patch Extraction]
-D --> E[Early Fusion Module]
-D --> F[Late Fusion Module]
-E --> G[Disease Classification]
-F --> G
-G --> H[Severity Estimation]
-H --> I[Output: Disease Type & Severity]
+## Local run
 
-Methodology & Intuition
+```bash
+pip install -r requirements.txt
+streamlit run leaf_disease.py
+```
 
-Image Acquisition: Collect high-resolution plant images.
+## Hugging Face deployment
 
-Preprocessing: Normalize, augment, and handle missing data.
+This repository is prepared for a Docker Space. Once you share the Hugging Face repo link, the remaining deployment flow is:
 
-UGNet Segmentation: Segment leaves and disease regions using gated convolutions for sharper edges.
+1. Copy or commit `unet80.h5` into the repo root.
+2. Push the repository to your Hugging Face Space.
+3. Let Hugging Face build the Docker app on port `7860`.
 
-Patch-Based Analysis: Divide segmented regions into patches for multi-scale analysis.
+## Notes
 
-Early Fusion: Merge features before classification.
-
-Late Fusion: Merge predictions after independent patch classification.
-
-Severity Estimation: Predict disease severity based on the original segmented area, avoiding patch spacing errors.
-
-Output Generation: Annotated images with disease type and severity scores.
-
-Technologies Used
-
-Python 3.10+
-
-TensorFlow / Keras
-
-OpenCV, NumPy, Pandas
-
-Matplotlib / Seaborn for visualization
-
-UGNet Architecture for segmentation
-Results & Evaluation 📊
-
-UGNet Training (70 epochs)
-
-Training Performance:
-| Epoch         | Dice Coefficient | IoU Metric | Loss   |
-| ------------- | ---------------- | ---------- | ------ |
-| Initial (1)   | 0.4508           | 0.2972     | 0.9401 |
-| Midpoint (35) | 0.7225           | 0.5705     | 0.4981 |
-| Final (70)    | 0.8499           | 0.7421     | 0.2697 |
-Validation Performance:
-| Epoch         | Val Dice Coefficient | Val IoU Metric | Val Loss |
-| ------------- | -------------------- | -------------- | -------- |
-| Initial (1)   | 0.2359               | 0.1349         | 7.9577   |
-| Midpoint (35) | 0.6780               | 0.5233         | 0.5888   |
-| Final (70)    | 0.7398               | 0.5952         | 0.4936   |
-Insights:
-
-Steady improvement in Dice and IoU across epochs.
-
-Validation metrics confirm good generalization with minimal overfitting.
-
-Segmentation quality is sufficient for downstream patch-based disease classification and severity estimation.
-
-Visualizations:
-
-Dice & IoU curves over epochs
-
-Input vs predicted masks
-
-Severity heatmaps
+- The classifier model currently behaves like a binary disease-risk predictor.
+- The UI and messaging are framed to present a strong, coherent demo without overstating unsupported class granularity.

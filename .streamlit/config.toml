@@ -1,0 +1,12 @@
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+maxUploadSize = 50
+
+[theme]
+base = "light"
+primaryColor = "#2F7D4D"
+backgroundColor = "#F5FAF3"
+secondaryBackgroundColor = "#E9F1E4"
+textColor = "#163026"
